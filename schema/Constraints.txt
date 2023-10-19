@@ -1,0 +1,50 @@
+Ride table:
+D reserv_time <= pickup_time <= drop_time
+D charge_per_km, distance > 0
+D status = completed, ongoing, yet to start
+D cust_rating, driv_rating = 0, 1, 2, 3, 4, 5, NULL(may choose not to rate)
+D car_pool = yes, no
+ride_id: unique if car pooling is no, otherwise it can repeat because we will show it for every customer id
+*** Need something else as primary key with ride_id as we cannot repeat ride_id otherwise.
+^ Updated schema has handled this
+
+Vehicle table:
+D Capacity: > 0, < 5 (excluding driver)
+D type: auto, mini, sedan, van, suv, premium
+D ownership: personal, rented, loaned
+
+Driver table:
+D commission_rate > 0
+D dob < date_of_join
+
+Commission table:
+D bonus >= 0
+D tax > 0
+
+Charges table:
+D tax > 0
+D late_fees >= 0
+D mode_of_payment: Online, Cash
+
+Loan payment table:
+D amount >= 0
+D mode: online, cheque, cash
+D status: Repaid, partial, no installment paid yet
+D gateway (if online payment): PayPal, NULL 
+D tax_rate > 0
+D balance_amt <= amount
+
+Reviewer table:
+D dob < date_of_join
+
+Location table:
+D name, country, state, city -> NOT NULL
+
+Car loan table:
+D amount, interest_rate, tenure > 0
+D emi_amount >= 6000
+D status: Repaid, partial, no installment paid yet
+
+Doubts:
+Removed avg_rating? - Can be derived and put in a view.
+Pin code in location? - Not required as we have coordinates.
