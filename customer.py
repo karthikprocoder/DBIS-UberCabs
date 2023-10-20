@@ -14,25 +14,29 @@ except psycopg2.Error as e:
     print(f"Database connection error: {e}")
 
 
-# Customer details
-cust_email = input("Enter your Email ID: ")
+# Customer details ethan.wilson@email.com
+cust_email = input("Enter your Email ID: ").strip()
 
 # check if the customer is in database
 row = cust_ride.get_customer(cust_email, cur)
+# print(row[0])
 
 # if the avg. rating is < 1 then deny service for misconduct
-if row != None and cust_ride.get_avg_cust_rating(int(row[0])) < 1: 
+if row and cust_ride.get_avg_cust_rating(int(row[0]), cur) <= 1: 
     utils.service_denied()
     exit()
 
 # if a new customer take in all the required details
 while row == None:
     details = utils.prompt_customer_details(cust_email)
+    print(details)
     try:
-        cust_ride.add_customer(details)
+        cust_ride.add_customer(details, cur)
+        conn.commit()
         row = details
-    except e:
-        cur.rollback()
+    except psycopg2.Error as e:
+        print(e)
+        conn.rollback()
         utils.invalid_credentials_message()
 
 

@@ -8,8 +8,8 @@ def welcome_customer_message(cust_name):
     print(f"We are delighted to see you again {cust_name}!!")
 
 def prompt_customer_details(email):
-    fname = input("Enter your first name")
-    lname = input("Enter your last name")
+    fname = input("Enter your first name: ")
+    lname = input("Enter your last name: ")
     # need to validate cust_id
     return (get_random_int(), fname, lname, email)
 
