@@ -1,0 +1,2 @@
+import utils
+utils.promp_ride_details(utils.avalaible_vehicles)

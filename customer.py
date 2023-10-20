@@ -36,17 +36,10 @@ while row == None:
         utils.invalid_credentials_message()
 
 
-# pickup point
-    
-
-# drop point
-
-
-# type of vehicle, show available car types
+pickup, drop, vehicle, pay_mode = utils.promp_ride_details(utils.avalaible_vehicles)
 
 ## car pooling feature
 
-# mode of payment
 
 # ask customer to pay the total price
 
