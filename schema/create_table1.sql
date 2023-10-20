@@ -28,9 +28,9 @@ CREATE TABLE Reviewer
 
 CREATE TABLE Guarantor
 (
-  guarantor_fname INT NOT NULL,
-  guarantor_lname INT NOT NULL,
-  guarantor_email INT NOT NULL,
+  guarantor_fname VARCHAR(50) NOT NULL,
+  guarantor_lname VARCHAR(50) NOT NULL,
+  guarantor_email VARCHAR(50) NOT NULL,
   guarantor_id INT NOT NULL,
   latitude NUMERIC(8, 5),
   longitude NUMERIC(8, 5),
@@ -40,7 +40,7 @@ CREATE TABLE Guarantor
 
 CREATE TABLE Reviewer_phone
 (
-  phone INT NOT NULL,
+  phone VARCHAR(12) NOT NULL,
   rev_id INT NOT NULL,
   PRIMARY KEY (phone, rev_id),
   FOREIGN KEY (rev_id) REFERENCES Reviewer(rev_id)
@@ -93,7 +93,7 @@ CREATE TABLE Vehicle
   number_plate VARCHAR(12) NOT NULL,
   model VARCHAR(20) NOT NULL,
   company VARCHAR(20) NOT NULL,
-  variant VARCHAR(20) NOT NULL,
+  -- variant VARCHAR(20) NOT NULL,
   type VARCHAR(10) NOT NULL CHECK(type IN ('Auto-Rick', 'Mini', 'Sedan', 'Van', 'SUV', 'Premium')),
   ownership VARCHAR(10) NOT NULL CHECK(ownership IN ('Personal', 'Rented', 'Loaned')),
   driv_id INT NOT NULL,
@@ -157,7 +157,7 @@ CREATE TABLE Car_loan
   amount NUMERIC(8, 2) NOT NULL CHECK(amount > 0),
   interest_rate NUMERIC(4, 2) NOT NULL CHECK(interest_rate > 0),
   tenure NUMERIC(4, 2) NOT NULL CHECK(tenure > 0),
-  emi_amount NUMERIC(7, 2) NOT NULL CHECK(emi_amount >= 6000),
+  emi_amount NUMERIC(7, 2) NOT NULL CHECK(emi_amount >= 4000),
   status VARCHAR(20) NOT NULL CHECK(status IN ('Zero installments', 'Partially paid', 'Completely paid')),
   loan_id INT NOT NULL,
   driv_id INT,

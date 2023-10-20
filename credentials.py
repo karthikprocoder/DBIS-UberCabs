@@ -1,6 +1,6 @@
 # Database connection parameters
 db_params = {
-    "database": "moviedb",  
+    "database": "UberCabs",  
     "user": "katy",
     "password": "123456",
     "host": "127.0.0.1",
