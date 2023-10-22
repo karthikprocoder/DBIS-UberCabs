@@ -1,6 +1,6 @@
 DROP TABLE Driver_phone;
 DROP TABLE Customer_phone;
-DROP TABLE Stops;
+-- DROP TABLE Stops;    
 DROP TABLE Commission;
 DROP TABLE Charges;
 DROP TABLE Loan_payment;
