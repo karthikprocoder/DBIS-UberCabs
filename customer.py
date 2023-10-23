@@ -82,6 +82,7 @@ customers may have different locations
 try:
     p1 = [0] * 2
     p2 = [0] * 2
+    pickup_loc_id, drop_loc_id = -1, -1
     cur.execute(f"SELECT latitude, longitude, loc_id FROM location where street = '{pickup}'")
     r1 = cur.fetchone()
     cur.execute(f"SELECT latitude, longitude, loc_id FROM location where street = '{drop}'")
@@ -99,7 +100,7 @@ try:
         p2[1] = float(r2[1])
         drop_loc_id = r2[2] 
     dist = utils.get_dist(p1, p2)
-    price = utils.get_price(dist, vehicle   )
+    price = utils.get_price(dist, vehicle)
     print(f"Total amount: Rs. {price}")
     pay_status = 'Pending'
     if pay_mode == 'Online':
@@ -149,7 +150,7 @@ try:
         number_plate = num_row[0]
         conn.commit()
     else:
-        print("...")
+        print(f"Sorry, {vehicle} is not available now..")
         exit()
 except psycopg2.Error as e:
     print(e)
