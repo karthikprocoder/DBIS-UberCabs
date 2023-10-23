@@ -23,7 +23,7 @@ def promp_ride_details(available_vehicles):
     prompt += "\n\nEnter a number: "
     type = int(input(prompt))
 
-    pay_mode = int(input("\nMode of payment..\n1. Online\n2. Cash\n\n Enter a number: "))
+    pay_mode = int(input("\nMode of payment..\n1. Online\n2. Cash\n\nEnter a number: "))
     pay_mode = 'Online' if pay_mode == 1 else 'Cash'
     return (pickUp, drop, available_vehicles[type - 1], pay_mode)
 

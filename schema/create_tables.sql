@@ -81,21 +81,29 @@ CREATE TABLE Driver
   CHECK(dob < date_of_join)
 );
 
+CREATE TABLE Vehicle_generics
+(
+  vehicle_type VARCHAR(10) NOT NULL,
+  extra_per NUMERIC(4, 2) NOT NULL,
+  capacity INT NOT NULL,
+  PRIMARY KEY (vehicle_type)
+);
+
 CREATE TABLE Vehicle
 (
   registration_num VARCHAR(20) NOT NULL,
   chassis_num VARCHAR(20) NOT NULL,
-  Capacity INT NOT NULL CHECK(Capacity > 0 AND Capacity <= 6),
   puc_num VARCHAR(20) NOT NULL,
   number_plate VARCHAR(12) NOT NULL,
   model VARCHAR(20) NOT NULL,
   company VARCHAR(20) NOT NULL,
   -- variant VARCHAR(20) NOT NULL,
-  type VARCHAR(10) NOT NULL CHECK(type IN ('Auto-Rick', 'Mini', 'Sedan', 'Van', 'SUV', 'Premium')),
+  type VARCHAR(10) NOT NULL,
   ownership VARCHAR(10) NOT NULL CHECK(ownership IN ('Personal', 'Rented', 'Loaned')),
   driv_id INT NOT NULL,
   PRIMARY KEY (chassis_num),
-  FOREIGN KEY (driv_id) REFERENCES Driver(driv_id)
+  FOREIGN KEY (driv_id) REFERENCES Driver(driv_id),
+  FOREIGN KEY (type) REFERENCES Vehicle_generics(vehicle_type)
 );
 
 CREATE TABLE Ride
@@ -169,7 +177,7 @@ CREATE TABLE Loan_payment
   amount NUMERIC(8, 2) NOT NULL,
   mode VARCHAR(20) NOT NULL CHECK(mode IN ('Online', 'Cheque', 'Cash')),
   status VARCHAR(20) NOT NULL CHECK(status IN ('Zero installments', 'Partially paid', 'Completely paid')),
-  gateway VARCHAR(20) NOT NULL,
+  gateway VARCHAR(20),
   tax_rate NUMERIC(4, 2) NOT NULL CHECK(tax_rate > 0),
   balance_amt NUMERIC(8, 2) NOT NULL CHECK(balance_amt <= amount AND balance_amt > 0),
   driv_id INT,
@@ -181,7 +189,15 @@ CREATE TABLE Loan_payment
   CASE
   WHEN mode = 'Online' THEN 'PayPal'
   ELSE NULL
-  END)
+  END),
+  CHECK(
+    status =
+    CASE
+    WHEN amount = balance_amt THEN 'Zero installments'
+    WHEN balance_amt = 0 THEN 'Completely paid'
+    WHEN balance_amt <= amount THEN 'Partially paid'
+    END
+  )
 );
 
 CREATE TABLE Charges

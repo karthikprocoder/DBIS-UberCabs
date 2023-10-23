@@ -1,12 +1,18 @@
 #!/usr/bin/python
 
 import credentials as creds
+import admin_queries as adminq
 import psycopg2
 import utils
+import pandas as pd
 
 # Connection to UberCabs database
 try:
-    conn = psycopg2.connect(**creds.db_params)
+    conn = psycopg2.connect(database='uberCabs',
+                            host="localhost",
+                            user="postgres",
+                            password="adipgadmin@1101",
+                            port=5432)
     cur = conn.cursor()
     print("Welcome")
 except psycopg2.Error as e:
@@ -77,7 +83,7 @@ customers may have different locations
 #     cur.execute("")
 
 
-
+pickup_loc_id = 0
 # ask customer to pay the total price also check if driver is available
 try:
     p1 = [0] * 2
@@ -217,6 +223,11 @@ if x == 1:
     except psycopg2.Error as e:
         print("Sorry some error occured.")
         print(e)
-conn.close()
 
-    
+x = int(input("Press 1 to see admin data: "))
+print()
+if(x == 1):
+    adminq.adminData(cur, pd)
+    conn.close()
+else:
+    conn.close()
