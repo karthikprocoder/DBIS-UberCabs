@@ -9,6 +9,7 @@ DROP TABLE Verify;
 DROP TABLE Tracking;
 DROP TABLE Ride;
 DROP TABLE Vehicle;
+DROP TABLE Vehicle_generics;
 DROP TABLE Driver;
 DROP TABLE Customer;
 DROP TABLE Guarantor_guarantor_phone;
