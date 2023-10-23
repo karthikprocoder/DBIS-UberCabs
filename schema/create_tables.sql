@@ -72,9 +72,9 @@ CREATE TABLE Driver
   email VARCHAR(50) NOT NULL,
   dob DATE NOT NULL,
   date_of_join DATE NOT NULL,
-  driv_lic_num VARCHAR(20) NOT NULL,
+  driv_lic_num VARCHAR(20),
   driv_id INT NOT NULL,
-  commission_rate NUMERIC(4, 2) NOT NULL CHECK(commission_rate > 0),
+  commission_rate NUMERIC(4, 2) CHECK(commission_rate > 0) DEFAULT 0.05,
   loc_id INT NOT NULL,
   PRIMARY KEY (driv_id),
   FOREIGN KEY (loc_id) REFERENCES Location(loc_id),
@@ -253,3 +253,24 @@ CREATE TABLE Driver_phone
   PRIMARY KEY (phone, driv_id),
   FOREIGN KEY (driv_id) REFERENCES Driver(driv_id)
 );
+
+CREATE VIEW Total_revenue AS 
+SELECT SUM(amount - (amount * commission_rate)) AS Total_Revenue 
+FROM (Driver NATURAL JOIN Ride) JOIN Charges USING (ride_id, cust_id)
+WHERE Charges.status = 'Completed';
+
+CREATE VIEW Cust_payment_status AS
+SELECT Customer.cust_id AS Customer_ID, CONCAT_WS(' ', cust_fname, cust_lname) AS Customer_name, 
+ride_id, amount, reserv_time AS Booking_time, pickup_loc_id, drop_loc_id, Charges.status AS Payment_status 
+FROM (Customer NATURAL JOIN Charges) JOIN Ride USING (ride_id);
+
+CREATE VIEW Total_rides_per_day AS
+SELECT cast(reserv_time as date), COUNT(*) AS Num_of_rides
+FROM Ride
+GROUP BY cast(reserv_time as date);
+
+CREATE VIEW Revenue_by_location AS
+SELECT pickup_loc_id, SUM(amount - (commission_rate * amount)) AS Revenue
+FROM (Charges NATURAL JOIN Driver) JOIN Ride USING (ride_id, driv_id, cust_id)
+GROUP BY pickup_loc_id
+ORDER BY Revenue DESC;

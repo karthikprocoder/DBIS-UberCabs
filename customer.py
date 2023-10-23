@@ -1,7 +1,5 @@
 #!/usr/bin/python
 
-import credentials as creds
-import admin_queries as adminq
 import psycopg2
 import utils
 import pandas as pd
@@ -224,10 +222,4 @@ if x == 1:
         print("Sorry some error occured.")
         print(e)
 
-x = int(input("Press 1 to see admin data: "))
-print()
-if(x == 1):
-    adminq.adminData(cur, pd)
-    conn.close()
-else:
-    conn.close()
+conn.close()

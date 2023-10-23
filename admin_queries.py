@@ -1,3 +1,18 @@
+import psycopg2
+import pandas as pd
+
+# Connection to UberCabs database
+try:
+    conn = psycopg2.connect(database='uberCabs',
+                            host="localhost",
+                            user="postgres",
+                            password="adipgadmin@1101",
+                            port=5432)
+    cur = conn.cursor()
+    print("Welcome")
+except psycopg2.Error as e:
+    print(f"Database connection error: {e}")
+
 def adminData(cur, pd):
     print("Total Revenue:")
     cur.execute("""SELECT SUM(amount - (amount * commission_rate)) AS Total_Revenue
@@ -27,8 +42,8 @@ def adminData(cur, pd):
 
     print("Payment status of customer:")
     cur.execute("""SELECT Customer.cust_id AS Customer_ID, CONCAT_WS(' ', cust_fname, cust_lname) AS Customer_name, 
-ride_id, amount, reserv_time AS Booking_time, pickup_loc_id, drop_loc_id, Charges.status AS Payment_status 
-FROM (Customer NATURAL JOIN Charges) JOIN Ride USING (ride_id)""")
+                ride_id, amount, reserv_time AS Booking_time, pickup_loc_id, drop_loc_id, Charges.status AS Payment_status 
+                FROM (Customer NATURAL JOIN Charges) JOIN Ride USING (ride_id)""")
     r = cur.fetchall()
     df = pd.DataFrame(r, columns=['Customer ID', 'Customer Name', 'Ride ID', 'Amount(in Rs)', 'Booking Time', 'Pickup Location', 'Drop Location', 'Payment Status'])
     print(df.to_string(), '\n')
@@ -126,3 +141,11 @@ FROM (Customer NATURAL JOIN Charges) JOIN Ride USING (ride_id)""")
     df = pd.DataFrame(r, columns=['Driver ID', 'Loan ID', 'Vehicle Chassis Number', 'Loan Amount(in Rs)', 'Balance Amount(in Rs)', 'EMI Amount(in Rs)',
                                   'Loan Payment Status'])
     print(df.to_string(), '\n')
+
+x = int(input("Press 1 to see admin data: "))
+print()
+if(x == 1):
+    adminData(cur, pd)
+    conn.close()
+else:
+    conn.close()
