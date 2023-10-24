@@ -217,9 +217,9 @@ def get_ride_history(driv_id, latest = False):
     if (check_driver(driv_id)==0):
         return
     
-    sql = f'SELECT pickup_time, drop_time, car_pool, cust_rating, reserv_time, status FROM ride WHERE driv_id = {driv_id} ORDER BY drop_time DESC'
+    sql = f'SELECT pickup_time, drop_time, car_pool, driv_rating, reserv_time, status FROM ride WHERE driv_id = {driv_id} ORDER BY drop_time DESC'
     if (latest):
-        sql = f'SELECT pickup_time, drop_time, car_pool, cust_rating, reserv_time, status FROM ride WHERE driv_id = {driv_id} ORDER BY drop_time DESC LIMIT 1'
+        sql = f'SELECT pickup_time, drop_time, car_pool, driv_rating, reserv_time, status FROM ride WHERE driv_id = {driv_id} ORDER BY drop_time DESC LIMIT 1'
         
     try:
         cur.execute(sql)
@@ -248,7 +248,8 @@ def get_path_for_current(driv_id):
     current_ride = cur.fetchall()
     print("Details for current ride and path")
     if (len(current_ride)==0):
-        print("There are not any ongoing rides")
+        print("There are no ongoing rides")
+        return [-1, -1, -1]
     else:
         print(tabulate(current_ride, headers=columns, tablefmt= 'rounded_outline'))
         sql1 = f"SELECT * FROM location WHERE loc_id = {current_ride[0][-2]}"    
@@ -267,6 +268,16 @@ def get_path_for_current(driv_id):
         columns.extend([desc[0] for desc in cur.description])
         rows = [loc1, loc2]
         print(tabulate(rows, headers=columns, tablefmt= 'rounded_outline'))
+        
+        sql = f"SELECT ride_id, cust_id, status FROM ride WHERE driv_id = {driv_id} AND status <> 'reached destination' "    
+        try:
+            cur.execute(sql)
+        except psycopg2.errors as e:
+            print(e)
+            exit(0)
+        return cur.fetchone()
+    
+        
 def get_info(driver_details):
     print('\nDriver Details')
     cur.execute(f"Select * from driver where driv_id = {driver_details['driv_id']}")
@@ -283,6 +294,44 @@ def get_info(driver_details):
     print('\nPhone Details')
     cur.execute(f"Select * from driver_phone where driv_id = {driver_details['driv_id']}")
     print(tabulate(cur.fetchall(), headers=[desc[0] for desc in cur.description], tablefmt='rounded_grid'))
+    
+def interactive(driver_details):
+    options = ['get customer','pick customer','add tracking','exit']
+    cust_id = 0
+    ride_id = 0
+    status = -1
+    while (True):
+        data = pick_option(options, 'Select an option', '')
+        if (data == options[0]):
+            ride_id, cust_id, status = get_path_for_current(driver_details['driv_id'])
+        elif (data == options[1]):
+            if (status == 'on the way'):
+                while(True):
+                    if (input('pick customer (y/N) :')=='y'):
+                        sql = f"UPDATE ride SET pickup_time = current_timestamp, status = 'ongoing' where ride_id = {ride_id} and cust_id = {cust_id}"
+                        try:
+                            cur.execute(sql)
+                            conn.commit()
+                        except psycopg2.Error as e:
+                            print(e)
+                            exit(-1)
+                        status = 'ongoing'
+                        break
+            elif (status == 'ongoing'):
+                print('customer already picked')
+            else:
+                print("No customers to pick")
+        elif (data == options[2]):
+            if (status == 'ongoing'):
+                print("add tracking")
+            else:
+                print('pick the customer first')
+        elif (data == options[3]):
+            return
+                
+                        
+            
+        
    
 if __name__ == '__main__': 
     """
@@ -312,7 +361,7 @@ if __name__ == '__main__':
     
     while(1):
         msg = "Pick an options to check details"
-        options = ['personal details','all earnings', 'last n earnings', 'ride_history', 'latest ride details ', 'path for current ride', 'exit']
+        options = ['personal details','all earnings', 'last n earnings', 'ride_history', 'latest ride details ', 'path for current ride','interactive mode', 'exit']
         data = pick_option(options, msg, "action")
         if (data == options[0]):
             get_info(driver_details)
@@ -330,6 +379,8 @@ if __name__ == '__main__':
         elif (data == options[5]):      
             get_path_for_current(driver_details['driv_id'])
         elif (data == options[6]):
+            interactive(driver_details)
+        elif (data == options[7]):
             exit(0)
         print('____________________________________________________________________________________________________________________________________________________')
     
