@@ -97,10 +97,10 @@ def add_vehicle(driv_id):
     data = 0
     for attr in columns:
         msg = f"Enter the value for {attr} : "
-        if (attr in ['capacity']):
-            data = input(msg).strip()
-            data = int(data)
-        elif (attr in ['driv_id']):
+        # if (attr in ['capacity']):
+        #     data = input(msg).strip()
+        #     data = int(data)
+        if (attr in ['driv_id']):
             data = driv_id  
         elif (attr == 'type'):
             data = pick_option(['Auto-Rick', 'Mini', 'Sedan', 'Van', 'SUV', 'Premium'], msg, attr)
@@ -109,7 +109,7 @@ def add_vehicle(driv_id):
         else:
             data = input(msg).strip()
         vehicle_details[attr] = data
-    sql = f"INSERT INTO vehicle VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+    sql = f"INSERT INTO vehicle VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
     data = list(vehicle_details.values())
     try:  
         cur.execute(sql, data)
