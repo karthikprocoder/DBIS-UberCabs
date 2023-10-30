@@ -1,6 +1,7 @@
 import random
 import math
-import psycopg2
+import inquirer
+from tabulate import tabulate 
 
 def getId(table, attr, cur):
     while True:
@@ -18,9 +19,9 @@ def welcome_customer_message(cust_name):
     print(f"We are delighted to see you again {cust_name}!!")
 
 def prompt_customer_details():
-    fname = input("Enter your first name: ")
-    lname = input("Enter your last name: ")
-    phone = input("Enter your phone no.: ")
+    fname = input("Enter your first name: ").strip()
+    lname = input("Enter your last name: ").strip()
+    phone = input("Enter your phone no.: ").strip()
     return (fname, lname, phone)
 
 def prompt_vehicle_details(available_vehicles):
@@ -31,13 +32,9 @@ def prompt_vehicle_details(available_vehicles):
     type = int(input(prompt))
     return available_vehicles[type - 1]
 
-def promp_ride_details(ask_pay = False):
-    pickUp = input("Pick up address: ")
-    drop = input("\nDrop address: ")
-    if ask_pay:
-        pay_mode = int(input("\nMode of payment..\n1. Online\n2. Cash\n\n Enter a number: "))
-        pay_mode = 'Online' if pay_mode == 1 else 'Cash'
-        return (pickUp, drop, pay_mode)
+def promp_ride_details():
+    pickUp = input("Pick up address: ").strip()
+    drop = input("Drop address: ").strip()
     return (pickUp, drop)
 
 def invalid_credentials_message():
@@ -59,3 +56,15 @@ def get_dist(p1, p2):
 
 def get_price(dist):
     return 10 + math.sqrt(dist) // 1
+
+####################################### UI ##############################################
+
+def pick_option(options, msg, attr):
+    questions = [
+    inquirer.List(attr,
+                  message = msg,
+                  choices=options,
+                  )
+    ]
+    answers = inquirer.prompt(questions)
+    return answers[attr]

@@ -4,6 +4,7 @@ import credentials as creds
 import psycopg2
 import utils
 import time
+from math import ceil
 
 # Connection to UberCabs database
 try:
@@ -14,7 +15,7 @@ except psycopg2.Error as e:
     print(f"Database connection error: {e}")
 
 
-n = int(input("Enter number of passengers.."))
+n = utils.pick_option([1, 2, 3, 4, 5, 6], "Number of Passengers: ", "action")
 cust_ids = []
 car_pool = 'No' if n == 1 else 'Yes'
 
@@ -57,16 +58,16 @@ try:
         exit()
 
     available_vehicles = [r[0] for r in rows]
-    vehicle = utils.prompt_vehicle_details(available_vehicles)
+    print()
+    vehicle = utils.pick_option(available_vehicles, "Choose vehicle: ", "action")
 
     for i in range(n):
-        if i:
-            pickup, drop = utils.promp_ride_details()
-        else:
-            pickup, drop, pay_mode = utils.promp_ride_details(True)
+        print(f"\nFor customer {i + 1}")
+        pickup, drop = utils.promp_ride_details()
         cust_pickups.append(pickup)
         cust_drops.append(drop)
-
+    print()
+    pay_mode = utils.pick_option(["Online", "Cash"], "Select Payment Mode: ", "action")
 except psycopg2.Error as e:
     print(e)
     conn.rollback()
@@ -110,17 +111,16 @@ try:
     row = cur.fetchone()
     ext_per = float(row[0])
     tot_amt = utils.get_price(dist)
-    tot_amt += ext_per * tot_amt
-    print(f"Total amount Rs.{tot_amt}")
+    tot_amt +=  ceil(ext_per * tot_amt)
+    print(f"Total amount is Rs.{tot_amt}")
     
     if pay_mode == 'Online':
-        x = int(input("Enter 1 to make payment: "))
-        if x != 1:
+        pay_status = utils.pick_option([f"Completed", "Cancel"], "Payment status: ", "action")
+        if pay_status == 'Cancel':
             print("No ride booked")
             exit()
-        pay_status = 'Completed'        
         print("Processing payment........")
-        time.sleep(2)
+        time.sleep(1)
 
     cur.execute(f"select driv_id, driv_fname from vehicle natural join driver where type = '{vehicle}' and driv_id not in ( select distinct driv_id from ride where status <> 'reached destination' ) LIMIT 1")
     driver = cur.fetchone()
@@ -168,10 +168,12 @@ except psycopg2.Error as e:
 
 print(f"Ride booked!!\nRide Details:")
 print(f''' 
-Driver: {driv_fname}
-Contact: {driv_phone}
-Vehicle: {vehicle}
-Number Plate: {vehicle_num_plate}
+    --------------------------------------- 
+     Driver      | {driv_fname}                 
+     Contact     | {driv_phone}                
+     Vehicle     | {vehicle}                   
+     Number Plate| {vehicle_num_plate}    
+    ---------------------------------------
 ''')
 
 
@@ -180,7 +182,8 @@ try:
     for i in range(n):
         # can add customer name here
         print(f"Cab yet to pickup customer {i + 1}...")
-        x = int(input("Press 1 when cab arrives..\n"))
+        while utils.pick_option(["Picked-up", "On the way"], "Ride status: ", "action") == "On the way":
+            pass
         if i == 0 and pay_status == 'Pending':
             x = int(input(f"Press 1 to pay Rs.{tot_amt}: "))
             if x != 1:
@@ -198,12 +201,14 @@ except psycopg2.Error as e:
 try:
     print("Ongoing ride.........")
     for i in range(n):
-        x = int(input("Press 1 when cab reaches destination..\n"))
+        while utils.pick_option(["Reached Destination", "Ongoing"], "Ride status: ", "action") == "Ongoing":
+            pass
         cur.execute(f"UPDATE ride SET drop_time = current_timestamp, status = 'reached destination' where ride_id = {r_id} and cust_id = {cust_ids[i]}")
-        x = int(input("Press 1 if you want to give us some feedback: "))
-        if x == 1:
-            rev_msg = input("feedback: ")
-            driv_rating = int(input("Rate the driver on the scale of 0-5: "))
+        x = utils.pick_option(["Yes", "No"], "Give us some feedback: ", "action")
+        if x == "Yes":
+            rev_msg = input("feedback message: ").strip()
+            print()
+            driv_rating = utils.pick_option([5, 4, 3, 2, 1], "Rate the ride: ", "action")
             cur.execute(f"UPDATE ride SET review = '{rev_msg}', driv_rating = {driv_rating} where ride_id = {r_id} and cust_id = {cust_ids[i]} ")
     conn.commit()
 except psycopg2.Error as e:
