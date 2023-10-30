@@ -6,7 +6,7 @@ import utils
 import time
 from math import ceil
 
-# Connection to UberCabs database
+###################### Connection to UberCabs database  ##########################
 try:
     conn = psycopg2.connect(**creds.db_params)
     cur = conn.cursor()
@@ -19,7 +19,7 @@ n = utils.pick_option([1, 2, 3, 4, 5, 6], "Number of Passengers: ", "action")
 cust_ids = []
 car_pool = 'No' if n == 1 else 'Yes'
 
-################## CUSTOMER INFO ###############################
+############################ CUSTOMER INFO ###############################
 
 try:
     for i in range(n):
@@ -43,7 +43,7 @@ except psycopg2.Error as e:
 
 
 
-#################### CHOOSE VEHICLE #############################
+############################ CHOOSE VEHICLE #############################
 vehicle = 'Sedan'
 cust_pickups = []
 cust_drops = []
@@ -74,8 +74,8 @@ except psycopg2.Error as e:
     print("error: choose vehicle")
 
 
-#################### ONLINE / CASH PAYMENT #########################
-############ the first customer will pay for the ride ##############
+###################### ONLINE / CASH PAYMENT #########################
+############## the first customer will pay for the ride ##############
 
 # id, pickup-lat, pickup-long
 pickup_locations = [[0] * 3] * n
