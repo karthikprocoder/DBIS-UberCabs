@@ -57,7 +57,7 @@ CREATE TABLE Customer
 (
   cust_fname VARCHAR(50) NOT NULL,
   cust_lname VARCHAR(50) NOT NULL,
-  email VARCHAR(50),
+  email VARCHAR(50) UNIQUE,
   dob DATE,
   cust_id INT NOT NULL,
   loc_id INT,
@@ -69,7 +69,7 @@ CREATE TABLE Driver
 (
   driv_fname VARCHAR(50) NOT NULL,
   driv_lname VARCHAR(50) NOT NULL,
-  email VARCHAR(50) NOT NULL,
+  email VARCHAR(50) NOT NULL UNIQUE,
   dob DATE NOT NULL,
   date_of_join DATE NOT NULL,
   driv_lic_num VARCHAR(20) NOT NULL,

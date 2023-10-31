@@ -21,25 +21,27 @@ car_pool = 'No' if n == 1 else 'Yes'
 
 ############################ CUSTOMER INFO ###############################
 
-try:
-    for i in range(n):
-        cust_email = input(f"Enter Email ID for customer {i+1}: ").strip()
-        cur.execute(f"SELECT cust_id, cust_fname, cust_lname, email FROM customer WHERE email = '{cust_email}'")
-        row = cur.fetchone()
-        if row:
-            cust_ids.append(row[0])
-        else:
-            fname, lname, phone = utils.prompt_customer_details()
-            id = utils.getId('customer', 'cust_id', cur)
-            cust_ids.append(id)
-            cur.execute(f"INSERT INTO customer (cust_id, cust_fname, cust_lname, email) VALUES ({id},'{fname}', '{lname}', '{cust_email}')")
-            cur.execute(f"INSERT INTO customer_phone VALUES ('{phone}', {id})")
-            conn.commit()
+for i in range(n):
+    while True:
+        try:
+            cust_email = input(f"Enter Email ID for customer {i+1}: ").strip()
+            cur.execute(f"SELECT cust_id, cust_fname, cust_lname, email FROM customer WHERE email = '{cust_email}'")
+            row = cur.fetchone()
+            if row:
+                cust_ids.append(row[0])
+            else:
+                fname, lname, phone = utils.prompt_customer_details()
+                id = utils.getId('customer', 'cust_id', cur)
+                cust_ids.append(id)
+                cur.execute(f"INSERT INTO customer (cust_id, cust_fname, cust_lname, email) VALUES ({id},'{fname}', '{lname}', '{cust_email}')")
+                cur.execute(f"INSERT INTO customer_phone VALUES ('{phone}', {id})")
+                conn.commit()
+            break
 
-except psycopg2.Error as e:
-    conn.rollback()
-    print(e)
-    utils.invalid_credentials_message()
+        except psycopg2.Error as e:
+            conn.rollback()
+            # print(e)
+            utils.invalid_credentials_message()
 
 
 
@@ -118,6 +120,7 @@ try:
         pay_status = utils.pick_option([f"Completed", "Cancel"], "Payment status: ", "action")
         if pay_status == 'Cancel':
             print("No ride booked")
+            conn.rollback()
             exit()
         print("Processing payment........")
         time.sleep(1)
@@ -125,7 +128,7 @@ try:
     cur.execute(f"select driv_id, driv_fname from vehicle natural join driver where type = '{vehicle}' and driv_id not in ( select distinct driv_id from ride where status <> 'reached destination' ) LIMIT 1")
     driver = cur.fetchone()
     if driver == None:
-        print(f"Sorry, {vehicle} is not available now..")
+        print(f"Payment unsuccessful,\nSorry, {vehicle} is not available now..")
         exit()
     
     driv_id , driv_fname = driver
@@ -139,15 +142,17 @@ try:
         row = cur.fetchone()
         if row == None:
             pickup_locations[i][0] = utils.getId('location', 'loc_id', cur)
-            cur.execute(f"INSERT INTO location (loc_id, latitude, longitude, street) VALUES ({pickup_locations[i][0]}, {pickup_locations[i][1]}, {pickup_locations[i][2]}, '{cust_pickups[i]}')")
-
+            cur.execute(f"INSERT INTO location (loc_id, latitude, longitude, street) VALUES ({pickup_locations[i][0]}, {pickup_locations[i][1]}, {pickup_locations[i][2]}, '{cust_pickups[i]}')")  
+        else:
+            pickup_locations[i][0] = int(row[0])
         cur.execute(f"SELECT latitude, longitude, loc_id FROM location where street = '{cust_drops[i]}'")
         row = cur.fetchone()
         if row == None:
             drop_locations[i][0] = utils.getId('location', 'loc_id', cur)
             cur.execute(f"INSERT INTO location (loc_id, latitude, longitude, street) VALUES ({drop_locations[i][0]}, {drop_locations[i][1]}, {drop_locations[i][2]}, '{cust_drops[i]}')")
-
-        cur.execute(f"INSERT INTO ride (reserv_time, car_pool, ride_id, status, driv_id, pickup_loc_id, drop_loc_id, cust_id) VALUES (current_timestamp,'{car_pool}', {r_id} ,'on the way', {driv_id}, {pickup_locations[i][0]}, {drop_locations[i][0]}, {cust_ids[i]})")
+        else:
+            drop_locations[i][0] = int(row[0])
+        cur.execute(f"INSERT INTO ride (reserv_time, car_pool, ride_id, status, driv_id, pickup_loc_id, drop_loc_id, cust_id) VALUES (current_timestamp,'{car_pool}', {r_id} ,'on the way', {driv_id}, {pickup_locations[i][0]}, {drop_locations[i][0]}, {cust_ids[i]})")  ## BUG: FOR REPEATING loc_id (pickup / drop)
         
     cur.execute(f"INSERT INTO charges (amount, status, mode_of_payment, ride_id, cust_id) VALUES ({tot_amt}, '{pay_status}', '{pay_mode}', {r_id}, {cust_ids[0]})")
     cur.execute(f"SELECT number_plate from vehicle where driv_id = {driv_id}")
