@@ -131,7 +131,8 @@ VALUES
   (7, '2023-07-01 18:30:00', '2023-07-01 19:00:00', 'Yes', 5, 4, '2023-07-01 18:00:00', 'Wonderful ride', 'reached destination', 7, 4, 3, 7),
   (8, '2023-08-01 20:45:00', '2023-08-01 21:15:00', 'No', 4, 4, '2023-08-01 20:15:00', 'Good driver', 'reached destination', 8, 6, 5, 8),
   (9, '2023-09-01 22:00:00', '2023-09-01 22:30:00', 'No', 3, 4, '2023-09-01 21:30:00', 'Average service', 'reached destination', 9, 8, 7, 9),
-  (10, '2023-10-01 23:15:00', '2023-10-01 23:45:00', 'Yes', 5, 5, '2023-10-01 22:45:00', 'Excellent ride', 'reached destination', 10, 10, 9, 10);
+  (10, '2023-10-01 23:15:00', '2023-10-01 23:45:00', 'Yes', 5, 5, '2023-10-01 22:45:00', 'Excellent ride', 'reached destination', 10, 10, 9, 10),
+  (11, '2023-10-31 09:15:00', '2023-10-31 09:45:00', 'No', 5, 5, '2023-10-31 08:45:00', 'Excellent ride', 'reached destination', 1, 10, 8, 2);
 
 -- Sample data for the "Tracking" table:
 INSERT INTO Tracking (time, loc_id, ride_id, cust_id)
@@ -201,7 +202,8 @@ VALUES
   (55.00, '2023-07-01 19:00:00', 'Pending', 'Cash', 7, 7),
   (70.00, '2023-08-01 21:15:00', 'Pending', 'Cash', 8, 8),
   (65.00, '2023-09-01 22:30:00', 'Pending', 'Online', 9, 9),
-  (75.00, '2023-10-01 23:45:00', 'Pending', 'Online', 10, 10);
+  (75.00, '2023-10-01 23:45:00', 'Pending', 'Online', 10, 10),
+  (75.00, '2023-10-31 23:45:00', 'Completed', 'Online', 11, 2);
 
 -- Sample data for the "Commission" table:
 INSERT INTO Commission (timestamp, earning, driv_id, ride_id, cust_id)

@@ -193,8 +193,7 @@ def get_driv_loan_details():
 #     cur.execute(query)
 #     print(tabulate(cur.fetchall(), headers = columns, tablefmt = 'rounded_grid'), '\n')
 
-if __name__ == '__main__': 
-    
+def stats():
     while(1):
         msg = "Pick an option to check details"
         options = ["Total Revenue", "Average rating of drivers", "Average Waiting Time for a driver", "Payment status of customer", 
@@ -233,4 +232,33 @@ if __name__ == '__main__':
         elif (data == options[14]):
             exit(0)
         print('____________________________________________________________________________________________________________________________________________________')
+    
+
+if __name__ == '__main__': 
+
+    print('\nAdding commission to drivers\n')
+    try:
+        cur.execute("""WITH no_car_pool(ride_id, cust_id, driv_id, amount) AS
+                    (SELECT Ride.ride_id, Ride.cust_id, Ride.driv_id, Charges.amount
+                    FROM Ride, Charges
+                    WHERE Ride.ride_id = Charges.ride_id AND
+                    Ride.cust_id = Charges.cust_id AND
+                    car_pool = 'No' AND Charges.status = 'Completed')
+                    INSERT INTO Commission
+                    (SELECT DATE_TRUNC('seconds', CURRENT_TIMESTAMP), amount * commission_rate, driv_id, ride_id, cust_id
+                    FROM no_car_pool NATURAL JOIN Driver
+                    WHERE ride_id NOT IN (SELECT ride_id FROM Commission))""")
+        conn.commit()
+        print("\nSuccessfully transferred commission to drivers!\n")
+    except psycopg2.Error as e:
+        print(f'Database error: {e}')
+        conn.rollback()
+        print("ROLLBACK")
+    
+    msg = "Wish to see stats?"
+    options = ['Yes', 'No']
+    data = pick_option(options, msg, "action")
+    if(data == options[0]):
+        stats()
+    
     
