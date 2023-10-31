@@ -1,6 +1,3 @@
-#!/usr/bin/python
-
-
 import datetime
 from numpy import average
 import credentials as creds
