@@ -61,6 +61,7 @@ CREATE TABLE Customer
   dob DATE,
   cust_id INT NOT NULL,
   loc_id INT,
+  password_hash VARCHAR(255) NOT NULL,
   PRIMARY KEY (cust_id),
   FOREIGN KEY (loc_id) REFERENCES Location(loc_id)
 );

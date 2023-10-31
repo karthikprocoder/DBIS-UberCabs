@@ -5,9 +5,9 @@ import psycopg2
 import utils
 import time
 from math import ceil
-import datetime
 from tabulate import tabulate
-
+import datetime
+import getpass
 
 ###################### Connection to UberCabs database  ##########################
 try:
@@ -28,16 +28,19 @@ for i in range(n):
     while True:
         try:
             cust_email = input(f"Enter Email ID for customer {i+1}: ").strip()
-            cur.execute(f"SELECT cust_id, cust_fname, cust_lname, email FROM customer WHERE email = '{cust_email}'")
+            cur.execute(f"SELECT cust_id, cust_fname, cust_lname, email, password_hash FROM customer WHERE email = '{cust_email}'")
             row = cur.fetchone()
             if row:
+                password = getpass.getpass("Enter your password to Log In: ")
+                if not utils.verify_password(password, str(row[-1])):
+                    raise ValueError("invalid password")
                 cust_ids.append(row[0])
             else:
-                fname, lname, phone, dob = utils.prompt_customer_details()
+                fname, lname, phone, dob, passwd_hash = utils.prompt_customer_details()
                 dob = datetime.date(*list(map(int, dob.split('-')))) 
                 id = utils.getId('customer', 'cust_id', cur)
                 cust_ids.append(id)
-                cur.execute(f"INSERT INTO customer (cust_id, cust_fname, cust_lname, email, dob) VALUES ({id},'{fname}', '{lname}', '{cust_email}', '{dob}')")
+                cur.execute(f"INSERT INTO customer (cust_id, cust_fname, cust_lname, email, dob, password_hash) VALUES ({id},'{fname}', '{lname}', '{cust_email}', '{dob}', '{passwd_hash}')")
                 cur.execute(f"INSERT INTO customer_phone VALUES ('{phone}', {id})")
                 conn.commit()
             break

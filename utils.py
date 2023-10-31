@@ -2,6 +2,16 @@ import random
 import math
 import inquirer
 from tabulate import tabulate 
+import bcrypt
+import getpass
+
+def hash_password(password):
+    salt = bcrypt.gensalt()
+    hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
+    return hashed_password.decode('utf-8')
+
+def verify_password(entered_password, stored_password_hash):
+    return bcrypt.checkpw(entered_password.encode('utf-8'), stored_password_hash.encode('utf-8'))
 
 
 def getId(table, attr, cur):
@@ -24,7 +34,8 @@ def prompt_customer_details():
     lname = input("Enter your last name: ").strip()
     phone = input("Enter your phone no.: ").strip()
     dob = input("Enter your Date of Birth: ")
-    return (fname, lname, phone, dob)
+    passwd = getpass.getpass("Set your password: ")
+    return (fname, lname, phone, dob, hash_password(passwd))
 
 def prompt_vehicle_details(available_vehicles):
     prompt = "\nAvailable Vehicles.."
@@ -70,3 +81,6 @@ def pick_option(options, msg, attr):
     ]
     answers = inquirer.prompt(questions)
     return answers[attr]
+
+
+# print(hash_password("123456"))

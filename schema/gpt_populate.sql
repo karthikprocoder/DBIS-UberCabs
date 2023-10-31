@@ -68,19 +68,19 @@ VALUES
   ('999-000-5555', 9),
   ('000-111-6666', 10);
 
--- Sample data for the "Customer" table:
-INSERT INTO Customer (cust_id, cust_fname, cust_lname, email, dob, loc_id)
+-- Sample data for the "Customer" table: password = 123456
+INSERT INTO Customer (cust_id, cust_fname, cust_lname, email, dob, loc_id, password_hash)
 VALUES
-  (1, 'Sarah', 'Williams', 'sarah@example.com', '1990-08-25', 1),
-  (2, 'James', 'Johnson', 'james@example.com', '1992-05-10', 2),
-  (3, 'Oliver', 'Brown', 'oliver@example.com', '1988-12-22', 3),
-  (4, 'Emma', 'Martinez', 'emma@example.com', '1995-03-05', 4),
-  (5, 'William', 'Jones', 'william@example.com', '1993-09-12', 5),
-  (6, 'Charlotte', 'Taylor', 'charlotte@example.com', '1991-06-30', 6),
-  (7, 'Daniel', 'Garcia', 'daniel@example.com', '1994-04-28', 7),
-  (8, 'Sophia', 'Davis', 'sophia@example.com', '1996-02-14', 8),
-  (9, 'Henry', 'Hernandez', 'henry@example.com', '1987-08-19', 9),
-  (10, 'Amelia', 'Smith', 'amelia@example.com', '1989-10-01', 10);
+  (1, 'Sarah', 'Williams', 'sarah@example.com', '1990-08-25', 1, '$2b$12$Tm7/PP1JMiR9mo890obTvOlM3Y879SdiQVLiVgU8QdDLRfONo2J8S'),
+  (2, 'James', 'Johnson', 'james@example.com', '1992-05-10', 2, '$2b$12$Tm7/PP1JMiR9mo890obTvOlM3Y879SdiQVLiVgU8QdDLRfONo2J8S'),
+  (3, 'Oliver', 'Brown', 'oliver@example.com', '1988-12-22', 3, '$2b$12$Tm7/PP1JMiR9mo890obTvOlM3Y879SdiQVLiVgU8QdDLRfONo2J8S'),
+  (4, 'Emma', 'Martinez', 'emma@example.com', '1995-03-05', 4, '$2b$12$Tm7/PP1JMiR9mo890obTvOlM3Y879SdiQVLiVgU8QdDLRfONo2J8S'),
+  (5, 'William', 'Jones', 'william@example.com', '1993-09-12', 5, '$2b$12$Tm7/PP1JMiR9mo890obTvOlM3Y879SdiQVLiVgU8QdDLRfONo2J8S'),
+  (6, 'Charlotte', 'Taylor', 'charlotte@example.com', '1991-06-30', 6, '$2b$12$Tm7/PP1JMiR9mo890obTvOlM3Y879SdiQVLiVgU8QdDLRfONo2J8S'),
+  (7, 'Daniel', 'Garcia', 'daniel@example.com', '1994-04-28', 7, '$2b$12$Tm7/PP1JMiR9mo890obTvOlM3Y879SdiQVLiVgU8QdDLRfONo2J8S'),
+  (8, 'Sophia', 'Davis', 'sophia@example.com', '1996-02-14', 8, '$2b$12$Tm7/PP1JMiR9mo890obTvOlM3Y879SdiQVLiVgU8QdDLRfONo2J8S'),
+  (9, 'Henry', 'Hernandez', 'henry@example.com', '1987-08-19', 9, '$2b$12$Tm7/PP1JMiR9mo890obTvOlM3Y879SdiQVLiVgU8QdDLRfONo2J8S'),
+  (10, 'Amelia', 'Smith', 'amelia@example.com', '1989-10-01', 10, '$2b$12$Tm7/PP1JMiR9mo890obTvOlM3Y879SdiQVLiVgU8QdDLRfONo2J8S');
 
 -- Sample data for the "Driver" table:
 INSERT INTO Driver (driv_id, driv_fname, driv_lname, email, dob, date_of_join, driv_lic_num, commission_rate, loc_id)

@@ -60,16 +60,18 @@ GROUP BY cast(reserv_time as date);
 
 -- Popular Pickup Locations:
 -- Not a View: Though this involves Ride relation(which is big) but such a stat will be seen occasionally
-SELECT pickup_loc_id, COUNT(*) AS pickup_count
-FROM Ride
-GROUP BY pickup_loc_id
+SELECT Ride.pickup_loc_id, street, COUNT(*) AS pickup_count
+FROM Ride, Location
+WHERE Ride.pickup_loc_id = Location.loc_id
+GROUP BY pickup_loc_id, street
 ORDER BY pickup_count DESC;
 
 -- Popular Drop Locations:
 -- Not a View: Though this involves Ride relation(which is big) but such a stat will be seen occasionally
-SELECT drop_loc_id, COUNT(*) AS drop_count
-FROM Ride
-GROUP BY drop_loc_id
+SELECT drop_loc_id, street, COUNT(*) AS drop_count
+FROM Ride, Location
+WHERE Ride.drop_loc_id = Location.loc_id
+GROUP BY drop_loc_id, street
 ORDER BY drop_count DESC;
 
 -- Driver Earnings:
@@ -80,7 +82,7 @@ GROUP BY driv_id
 ORDER BY Earnings DESC;
 
 -- *** ^ Can be calculated from Commission Table easily
-    Anyway we have to maintain the Commission table
+-- Anyway we have to maintain the Commission table
 
 -- Revenue by City / Pickup Location:
 -- View: Computationally expensive to get it from scratch
@@ -116,3 +118,22 @@ ORDER BY balance_amt DESC;
 
 -- 1 Transaction execution
 -- Create a view out of query if computing all the data from scratch is very expensive as it might have to more than 2 relations.
+
+-- All the natural joins used till now:
+-- Charges, Driver, Ride
+-- Customer, Charges, Ride
+-- Ride, Driver
+
+-- Advantage of keeping them as views is that we can use them directly to write queries which involve joins of the same tables.
+
+-- Commission adding query
+WITH no_car_pool(ride_id, cust_id, driv_id, amount) AS
+(SELECT Ride.ride_id, Ride.cust_id, Ride.driv_id, Charges.amount
+FROM Ride, Charges
+WHERE Ride.ride_id = Charges.ride_id AND
+Ride.cust_id = Charges.cust_id AND
+car_pool = 'No' AND Charges.status = 'Completed')
+INSERT INTO Commission
+(SELECT DATE_TRUNC('seconds', CURRENT_TIMESTAMP), amount * commission_rate, driv_id, ride_id, cust_id
+FROM no_car_pool NATURAL JOIN Driver
+WHERE ride_id NOT IN (SELECT ride_id FROM Commission));
