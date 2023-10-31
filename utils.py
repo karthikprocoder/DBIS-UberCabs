@@ -3,6 +3,7 @@ import math
 import inquirer
 from tabulate import tabulate 
 
+
 def getId(table, attr, cur):
     while True:
         id = get_random_id()
@@ -22,7 +23,8 @@ def prompt_customer_details():
     fname = input("Enter your first name: ").strip()
     lname = input("Enter your last name: ").strip()
     phone = input("Enter your phone no.: ").strip()
-    return (fname, lname, phone)
+    dob = input("Enter your Date of Birth: ")
+    return (fname, lname, phone, dob)
 
 def prompt_vehicle_details(available_vehicles):
     prompt = "\nAvailable Vehicles.."

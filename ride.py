@@ -5,6 +5,8 @@ import psycopg2
 import utils
 import time
 from math import ceil
+import datetime
+
 
 ###################### Connection to UberCabs database  ##########################
 try:
@@ -30,17 +32,20 @@ for i in range(n):
             if row:
                 cust_ids.append(row[0])
             else:
-                fname, lname, phone = utils.prompt_customer_details()
+                fname, lname, phone, dob = utils.prompt_customer_details()
+                dob = datetime.date(*list(map(int, dob.split('-')))) 
                 id = utils.getId('customer', 'cust_id', cur)
                 cust_ids.append(id)
-                cur.execute(f"INSERT INTO customer (cust_id, cust_fname, cust_lname, email) VALUES ({id},'{fname}', '{lname}', '{cust_email}')")
+                cur.execute(f"INSERT INTO customer (cust_id, cust_fname, cust_lname, email, dob) VALUES ({id},'{fname}', '{lname}', '{cust_email}', '{dob}')")
                 cur.execute(f"INSERT INTO customer_phone VALUES ('{phone}', {id})")
                 conn.commit()
             break
 
         except psycopg2.Error as e:
             conn.rollback()
-            # print(e)
+            utils.invalid_credentials_message()
+        except ValueError as e:
+            conn.rollback()
             utils.invalid_credentials_message()
 
 
@@ -190,14 +195,11 @@ try:
         while utils.pick_option(["Picked-up", "On the way"], "Ride status: ", "action") == "On the way":
             pass
         if i == 0 and pay_status == 'Pending':
-            x = int(input(f"Press 1 to pay Rs.{tot_amt}: "))
-            if x != 1:
-                exit()
+            x = utils.pick_option(["Yes"], f"Pay Rs.{tot_amt}: ", "actions")
             cur.execute(f"UPDATE charges SET status = 'Completed' where ride_id = {r_id} and cust_id = {cust_ids[i]}")
         cur.execute(f"UPDATE ride SET pickup_time = current_timestamp, status = 'ongoing' where ride_id = {r_id} and cust_id = {cust_ids[i]}")
     conn.commit()
 except psycopg2.Error as e:
-    conn.rollback()
     print(e)
     print("ride-pickup-error")
     exit()
@@ -213,7 +215,7 @@ try:
         if x == "Yes":
             rev_msg = input("feedback message: ").strip()
             print()
-            driv_rating = utils.pick_option([5, 4, 3, 2, 1], "Rate the ride: ", "action")
+            driv_rating = utils.pick_option([5, 4, 3, 2, 1], "Rate the driver: ", "action")
             cur.execute(f"UPDATE ride SET review = '{rev_msg}', driv_rating = {driv_rating} where ride_id = {r_id} and cust_id = {cust_ids[i]} ")
     conn.commit()
 except psycopg2.Error as e:
