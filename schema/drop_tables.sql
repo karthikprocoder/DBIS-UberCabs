@@ -1,7 +1,3 @@
-DROP VIEW Total_revenue;
-DROP VIEW Cust_payment_status;
-DROP VIEW Total_rides_per_day;
-DROP VIEW Revenue_by_location;
 DROP TABLE Driver_phone;
 DROP TABLE Customer_phone;
 -- DROP TABLE Stops;    

@@ -99,11 +99,11 @@ VALUES
 INSERT INTO Vehicle_generics (vehicle_type, extra_per, capacity)
 VALUES
   ('Auto-Rick', 0, 3),
-  ('Mini', 5, 4),
-  ('Sedan', 10, 4),
-  ('Van', 7.5, 6),
-  ('SUV', 15, 6),
-  ('Premium', 20, 4);
+  ('Mini', 0.05, 4),
+  ('Sedan', 0.1, 4),
+  ('Van', 0.12, 6),
+  ('SUV', 0.15, 6),
+  ('Premium', 0.2, 4);
 
 -- Sample data for the "Vehicle" table with matching chassis_num values in Car_loan:
 INSERT INTO Vehicle (registration_num, chassis_num, puc_num, number_plate, model, company, type, ownership, driv_id)
