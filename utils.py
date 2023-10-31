@@ -55,7 +55,7 @@ def get_dist(p1, p2):
     return abs(p1[0] - p2[0]) + abs(p1[1] - p2[1])
 
 def get_price(dist):
-    return 10 + math.sqrt(dist) // 1
+    return 200 + math.sqrt(dist) // 1
 
 ####################################### UI ##############################################
 

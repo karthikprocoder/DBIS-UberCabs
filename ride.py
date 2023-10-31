@@ -138,20 +138,20 @@ try:
     # location ids
     for i in range(n):
 
-        cur.execute(f"SELECT latitude, longitude, loc_id FROM location where street = '{cust_pickups[i]}'")
+        cur.execute(f"SELECT loc_id, latitude, longitude FROM location where street = '{cust_pickups[i]}'")
         row = cur.fetchone()
         if row == None:
             pickup_locations[i][0] = utils.getId('location', 'loc_id', cur)
             cur.execute(f"INSERT INTO location (loc_id, latitude, longitude, street) VALUES ({pickup_locations[i][0]}, {pickup_locations[i][1]}, {pickup_locations[i][2]}, '{cust_pickups[i]}')")  
         else:
-            pickup_locations[i][0] = int(row[0])
-        cur.execute(f"SELECT latitude, longitude, loc_id FROM location where street = '{cust_drops[i]}'")
+            pickup_locations[i][0], pickup_locations[i][1], pickup_locations[i][2] = int(row[0]), float(row[1]), float(row[2])
+        cur.execute(f"SELECT loc_id, latitude, longitude FROM location where street = '{cust_drops[i]}'")
         row = cur.fetchone()
         if row == None:
             drop_locations[i][0] = utils.getId('location', 'loc_id', cur)
             cur.execute(f"INSERT INTO location (loc_id, latitude, longitude, street) VALUES ({drop_locations[i][0]}, {drop_locations[i][1]}, {drop_locations[i][2]}, '{cust_drops[i]}')")
         else:
-            drop_locations[i][0] = int(row[0])
+            drop_locations[i][0], drop_locations[i][1], drop_locations[i][2] = int(row[0]), float(row[1]), float(row[2])
         cur.execute(f"INSERT INTO ride (reserv_time, car_pool, ride_id, status, driv_id, pickup_loc_id, drop_loc_id, cust_id) VALUES (current_timestamp,'{car_pool}', {r_id} ,'on the way', {driv_id}, {pickup_locations[i][0]}, {drop_locations[i][0]}, {cust_ids[i]})")  ## BUG: FOR REPEATING loc_id (pickup / drop)
         
     cur.execute(f"INSERT INTO charges (amount, status, mode_of_payment, ride_id, cust_id) VALUES ({tot_amt}, '{pay_status}', '{pay_mode}', {r_id}, {cust_ids[0]})")
