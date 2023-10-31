@@ -1,5 +1,16 @@
 import random
 import math
+import inquirer
+from tabulate import tabulate 
+
+def getId(table, attr, cur):
+    while True:
+        id = get_random_id()
+        cur.execute(f'SELECT * FROM {table} where {attr} = {id}')
+        rid = cur.fetchone()
+        if rid == None:
+            return id;
+
 
 def uber_logo_message():
     pass
@@ -8,24 +19,23 @@ def welcome_customer_message(cust_name):
     print(f"We are delighted to see you again {cust_name}!!")
 
 def prompt_customer_details():
-    fname = input("Enter your first name: ")
-    lname = input("Enter your last name: ")
-    phone = input("Enter your phone no.: ")
+    fname = input("Enter your first name: ").strip()
+    lname = input("Enter your last name: ").strip()
+    phone = input("Enter your phone no.: ").strip()
     return (fname, lname, phone)
 
-def promp_ride_details(available_vehicles):
-    pickUp = input("Pick up address: ")
-    drop = input("\nDrop address: ")
-
+def prompt_vehicle_details(available_vehicles):
     prompt = "\nAvailable Vehicles.."
     for i in range(len(available_vehicles)):
         prompt += f"\n{i + 1}. {available_vehicles[i]}"
-    prompt += "\n\nEnter a number: "
+    prompt += "\n\nEnter option no.  "
     type = int(input(prompt))
+    return available_vehicles[type - 1]
 
-    pay_mode = int(input("\nMode of payment..\n1. Online\n2. Cash\n\nEnter a number: "))
-    pay_mode = 'Online' if pay_mode == 1 else 'Cash'
-    return (pickUp, drop, available_vehicles[type - 1], pay_mode)
+def promp_ride_details():
+    pickUp = input("Pick up address: ").strip()
+    drop = input("Drop address: ").strip()
+    return (pickUp, drop)
 
 def invalid_credentials_message():
     print("Invalid credentials, please try again..\n")
@@ -44,14 +54,17 @@ def get_coordinates():
 def get_dist(p1, p2):
     return abs(p1[0] - p2[0]) + abs(p1[1] - p2[1])
 
-pr_map = {"Auto-Rick" : 3, "Mini" : 3.2, "Sedan" : 3.5, "Van" : 3.5, "SUV" : 4.0, "Premium" : 5.0}
-def get_price(dist, type):
-    return 10 + math.sqrt(dist) * pr_map[type] // 1
-# avalaible_vehicles = [
-#     "Auto-Rick",
-#     "Mini"
-#     "Sedan",
-#     "Van",
-#     "SUV",
-#     "Premium"
-# ]
+def get_price(dist):
+    return 200 + math.sqrt(dist) // 1
+
+####################################### UI ##############################################
+
+def pick_option(options, msg, attr):
+    questions = [
+    inquirer.List(attr,
+                  message = msg,
+                  choices=options,
+                  )
+    ]
+    answers = inquirer.prompt(questions)
+    return answers[attr]
