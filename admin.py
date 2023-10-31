@@ -1,5 +1,4 @@
 import psycopg2
-import pandas as pd
 from tabulate import tabulate
 import inquirer
 
