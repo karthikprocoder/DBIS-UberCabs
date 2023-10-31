@@ -148,46 +148,60 @@ VALUES
   ('2023-10-01 23:20:00', 10, 10, 10);
 
 -- Sample data for the "Verify" table:
-INSERT INTO Verify (pay_timestamp, tax_rate, payment, driv_id, rev_id)
+-- INSERT INTO Verify (pay_timestamp, tax_rate, payment, driv_id, rev_id)
+-- VALUES
+--   ('2023-01-15 12:00:00', 0.10, 1000.00, 1, 1),
+--   ('2023-02-20 12:30:00', 0.12, 1200.00, 2, 2),
+--   ('2023-03-10 13:15:00', 0.14, 1400.00, 3, 3),
+--   ('2023-04-05 13:45:00', 0.11, 1100.00, 4, 4),
+--   ('2023-05-12 14:30:00', 0.13, 1300.00, 5, 5),
+--   ('2023-06-18 15:00:00', 0.12, 1200.00, 6, 6),
+--   ('2023-07-25 15:45:00', 0.15, 1500.00, 7, 7),
+--   ('2023-08-04 16:15:00', 0.11, 1100.00, 8, 8),
+--   ('2023-09-15 16:55:00', 0.14, 1400.00, 9, 9),
+--   ('2023-10-20 17:30:00', 0.12, 1200.00, 10, 10);
+
+INSERT INTO Verify (pay_timestamp, driv_id, rev_id)
 VALUES
-  ('2023-01-15 12:00:00', 0.10, 1000.00, 1, 1),
-  ('2023-02-20 12:30:00', 0.12, 1200.00, 2, 2),
-  ('2023-03-10 13:15:00', 0.14, 1400.00, 3, 3),
-  ('2023-04-05 13:45:00', 0.11, 1100.00, 4, 4),
-  ('2023-05-12 14:30:00', 0.13, 1300.00, 5, 5),
-  ('2023-06-18 15:00:00', 0.12, 1200.00, 6, 6),
-  ('2023-07-25 15:45:00', 0.15, 1500.00, 7, 7),
-  ('2023-08-04 16:15:00', 0.11, 1100.00, 8, 8),
-  ('2023-09-15 16:55:00', 0.14, 1400.00, 9, 9),
-  ('2023-10-20 17:30:00', 0.12, 1200.00, 10, 10);
+  ('2023-01-15 12:00:00', 1, 1),
+  ('2023-02-20 12:30:00', 2, 2),
+  ('2023-03-10 13:15:00', 3, 3),
+  ('2023-04-05 13:45:00', 4, 4),
+  ('2023-05-12 14:30:00', 5, 5),
+  ('2023-06-18 15:00:00', 6, 6),
+  ('2023-07-25 15:45:00', 7, 7),
+  ('2023-08-04 16:15:00', 8, 8),
+  ('2023-09-15 16:55:00', 9, 9),
+  ('2023-10-20 17:30:00', 10, 10);
+
 
 -- Sample data for the "Car_loan" table with emi_amount constraint:
-INSERT INTO Car_loan (amount, interest_rate, tenure, emi_amount, status, loan_id, driv_id, guarantor_id, chassis_num)
+INSERT INTO Car_loan (amount, interest_rate, tenure, emi_amount, status, loan_id, driv_id, guarantor_id, chassis_num, unpaid_amount)
 VALUES
-  (200000.00, 5.00, 6.00, 4000.00, 'Partially paid', 1, 1, 1, 'ABC123456'),
-  (250000.00, 6.00, 5.00, 5000.00, 'Completely paid', 2, 2, 2, 'DEF789012'),
-  (300000.00, 5.50, 7.00, 4500.00, 'Zero installments', 3, 3, 3, 'GHI345678'),
-  (220000.00, 6.50, 4.00, 5500.00, 'Partially paid', 4, 4, 4, 'JKL901234'),
-  (280000.00, 5.00, 6.00, 4200.00, 'Completely paid', 5, 5, 5, 'MNO567890'),
-  (210000.00, 6.00, 5.00, 4800.00, 'Partially paid', 6, 6, 6, 'PQR123456'),
-  (260000.00, 5.50, 7.00, 4400.00, 'Zero installments', 7, 7, 7, 'STU789012'),
-  (240000.00, 6.50, 4.00, 5200.00, 'Zero installments', 8, 8, 8, 'VWX345678'),
-  (290000.00, 5.00, 6.00, 4600.00, 'Completely paid', 9, 9, 9, 'YZA901234'),
-  (270000.00, 6.00, 5.00, 5400.00, 'Partially paid', 10, 10, 10, 'BCD567890');
+  (200000.00, 5.00, 6.00, 4000.00, 'Partially paid', 1, 1, 1, 'ABC123456', 100000),
+  (250000.00, 6.00, 5.00, 5000.00, 'Completely paid', 2, 2, 2, 'DEF789012', 0),
+  (300000.00, 5.50, 7.00, 4500.00, 'Zero installments', 3, 3, 3, 'GHI345678', 300000.00),
+  (220000.00, 6.50, 4.00, 5500.00, 'Partially paid', 4, 4, 4, 'JKL901234', 210000.00),
+  (280000.00, 5.00, 6.00, 4200.00, 'Completely paid', 5, 5, 5, 'MNO567890', 0),
+  (210000.00, 6.00, 5.00, 4800.00, 'Partially paid', 6, 6, 6, 'PQR123456', 200000.00),
+  (260000.00, 5.50, 7.00, 4400.00, 'Zero installments', 7, 7, 7, 'STU789012', 260000.00),
+  (240000.00, 6.50, 4.00, 5200.00, 'Zero installments', 8, 8, 8, 'VWX345678', 240000.00),
+  (290000.00, 5.00, 6.00, 4600.00, 'Completely paid', 9, 9, 9, 'YZA901234', 0),
+  (270000.00, 6.00, 5.00, 5400.00, 'Partially paid', 10, 10, 10, 'BCD567890', 260000.00);
 
--- Sample data for the "Loan_payment" table with balance_amt less than amount:
-INSERT INTO Loan_payment (timestamp, amount, mode, status, gateway, tax_rate, balance_amt, driv_id, loan_id)
+-- Sample data for the "Loan_payment" table:
+INSERT INTO Loan_payment (timestamp, amount, mode, gateway, driv_id, loan_id)
 VALUES
-  ('2023-01-15 10:30:00', 200000.00, 'Online', 'Partially paid', 'PayPal', 10.00, 113000.00, 1, 1),
-  ('2023-02-15 11:45:00', 250000.00, 'Cheque', 'Partially paid', 'Bank Transfer', 15.00, 113500.00, 2, 2),
-  ('2023-03-15 09:15:00', 300000.00, 'Cash', 'Partially paid', 'Cash Payment', 5.00, 121800.00, 3, 3),
-  ('2023-04-15 14:20:00', 220000.00, 'Online', 'Partially paid', 'PayPal', 12.00, 113300.00, 4, 4),
-  ('2023-05-15 13:10:00', 280000.00, 'Cheque', 'Partially paid', 'Bank Transfer', 18.00, 112500.00, 5, 5),
-  ('2023-06-15 16:50:00', 210000.00, 'Cash', 'Partially paid', 'Cash Payment', 8.00, 131100.00, 6, 6),
-  ('2023-07-15 08:25:00', 260000.00, 'Online', 'Zero installments', 'PayPal', 11.00, 260000.00, 7, 7),
-  ('2023-08-15 12:55:00', 240000.00, 'Cheque', 'Zero installments', 'Bank Transfer', 20.00, 240000.00, 8, 8),
-  ('2023-09-15 09:40:00', 290000.00, 'Cash', 'Zero installments', 'Cash Payment', 6.00, 290000.00, 9, 9),
-  ('2023-10-15 14:15:00', 270000.00, 'Online', 'Zero installments', 'PayPal', 16.00, 270000.00, 10, 10);
+  ('2023-01-15 10:30:00', 200000.00, 'Online', 'PayPal', 1, 1),
+  ('2023-02-15 11:45:00', 250000.00, 'Cheque', 'Bank Transfer', 2, 2),
+  ('2023-03-15 09:15:00', 300000.00, 'Cash', 'Cash Payment', 3, 3),
+  ('2023-04-15 14:20:00', 220000.00, 'Online', 'PayPal', 4, 4),
+  ('2023-05-15 13:10:00', 280000.00, 'Cheque', 'Bank Transfer', 5, 5),
+  ('2023-06-15 16:50:00', 210000.00, 'Cash', 'Cash Payment', 6, 6),
+  ('2023-07-15 08:25:00', 260000.00, 'Online', 'PayPal', 7, 7),
+  ('2023-08-15 12:55:00', 240000.00, 'Cheque', 'Bank Transfer', 8, 8),
+  ('2023-09-15 09:40:00', 290000.00, 'Cash', 'Cash Payment', 9, 9),
+  ('2023-10-15 14:15:00', 270000.00, 'Online', 'PayPal', 10, 10);
 
 -- Sample data for the "Charges" table:
 INSERT INTO Charges (amount, timestamp, status, mode_of_payment, ride_id, cust_id)

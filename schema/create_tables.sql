@@ -30,7 +30,7 @@ CREATE TABLE Guarantor
 (
   guarantor_fname VARCHAR(50) NOT NULL,
   guarantor_lname VARCHAR(50) NOT NULL,
-  guarantor_email VARCHAR(50) NOT NULL,
+  guarantor_email VARCHAR(50) UNIQUE NOT NULL,
   guarantor_id INT NOT NULL,
   loc_id INT NOT NULL,
   PRIMARY KEY (guarantor_id),
@@ -145,8 +145,8 @@ CREATE TABLE Tracking
 CREATE TABLE Verify
 (
   pay_timestamp TIMESTAMP NOT NULL,
-  tax_rate NUMERIC(4, 2) NOT NULL,
-  payment NUMERIC(7, 2) NOT NULL,
+  -- tax_rate NUMERIC(4, 2) NOT NULL,
+  -- payment NUMERIC(7, 2) NOT NULL,
   driv_id INT,
   rev_id INT,
   PRIMARY KEY (driv_id, rev_id),
@@ -157,6 +157,7 @@ CREATE TABLE Verify
 CREATE TABLE Car_loan
 (
   amount NUMERIC(8, 2) NOT NULL CHECK(amount > 0),
+  unpaid_amount NUMERIC(8, 2) NOT NULL,
   interest_rate NUMERIC(4, 2) NOT NULL CHECK(interest_rate > 0),
   tenure NUMERIC(4, 2) NOT NULL CHECK(tenure > 0),
   emi_amount NUMERIC(7, 2) NOT NULL CHECK(emi_amount >= 4000),
@@ -168,7 +169,15 @@ CREATE TABLE Car_loan
   PRIMARY KEY (loan_id),
   FOREIGN KEY (driv_id) REFERENCES Driver(driv_id),
   FOREIGN KEY (guarantor_id) REFERENCES Guarantor(guarantor_id),
-  FOREIGN KEY (chassis_num) REFERENCES Vehicle(chassis_num)
+  FOREIGN KEY (chassis_num) REFERENCES Vehicle(chassis_num),
+  CHECK(
+    status =
+    CASE
+    WHEN amount = unpaid_amount THEN 'Zero installments'
+    WHEN unpaid_amount = 0 THEN 'Completely paid'
+    WHEN unpaid_amount <= amount THEN 'Partially paid'
+    END
+  )
 );
 
 CREATE TABLE Loan_payment
@@ -176,28 +185,28 @@ CREATE TABLE Loan_payment
   timestamp TIMESTAMP NOT NULL,
   amount NUMERIC(8, 2) NOT NULL,
   mode VARCHAR(20) NOT NULL CHECK(mode IN ('Online', 'Cheque', 'Cash')),
-  status VARCHAR(20) NOT NULL CHECK(status IN ('Zero installments', 'Partially paid', 'Completely paid')),
+  -- status VARCHAR(20) NOT NULL CHECK(status IN ('Zero installments', 'Partially paid', 'Completely paid')),
   gateway VARCHAR(20),
-  tax_rate NUMERIC(4, 2) NOT NULL CHECK(tax_rate > 0),
-  balance_amt NUMERIC(8, 2) NOT NULL CHECK(balance_amt <= amount AND balance_amt > 0),
+  -- tax_rate NUMERIC(4, 2) NOT NULL CHECK(tax_rate > 0),
+  -- balance_amt NUMERIC(8, 2) NOT NULL CHECK(balance_amt <= amount AND balance_amt > 0),
   driv_id INT,
   loan_id INT,
-  PRIMARY KEY (driv_id, loan_id),
+  PRIMARY KEY (loan_id, timestamp),
   FOREIGN KEY (driv_id) REFERENCES Driver(driv_id),
   FOREIGN KEY (loan_id) REFERENCES Car_loan(loan_id),
   CHECK(gateway =
   CASE
   WHEN mode = 'Online' THEN 'PayPal'
   ELSE NULL
-  END),
-  CHECK(
-    status =
-    CASE
-    WHEN amount = balance_amt THEN 'Zero installments'
-    WHEN balance_amt = 0 THEN 'Completely paid'
-    WHEN balance_amt <= amount THEN 'Partially paid'
-    END
-  )
+  END)
+  -- CHECK(
+  --   status =
+  --   CASE
+  --   WHEN amount = balance_amt THEN 'Zero installments'
+  --   WHEN balance_amt = 0 THEN 'Completely paid'
+  --   WHEN balance_amt <= amount THEN 'Partially paid'
+  --   END
+  -- )
 );
 
 CREATE TABLE Charges
