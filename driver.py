@@ -103,7 +103,7 @@ def add_vehicle(driv_id):
         elif (attr == 'type'):
             data = pick_option(['Auto-Rick', 'Mini', 'Sedan', 'Van', 'SUV', 'Premium'], msg, attr)
         elif (attr == 'ownership'):
-            data = pick_option(['Personal', 'Rented', 'Loaned'], msg, attr)
+            data = pick_option(['Personal', 'Rented'], msg, attr)
         else:
             data = input(msg).strip()
         vehicle_details[attr] = data
@@ -251,8 +251,9 @@ def get_path_for_current(driv_id, verbose = True):
     current_ride = cur.fetchall()
     if (verbose):
         print("Details for current ride and path")
-    if (len(current_ride)==0 and verbose):
-        print("There are no ongoing rides")
+    if (len(current_ride)==0):
+        if (verbose):
+            print("There are no ongoing rides")
         return [-1, -1, -1, -1, -1]
     else:
         if (verbose):
@@ -363,7 +364,6 @@ def interactive(driver_details):
                 except psycopg2.Error as e:
                     print(e)
                     exit(-1)
-                cur.execute(sql)
                 print(tabulate(cur.fetchall(), headers=[desc[0] for desc in cur.description], tablefmt='rounded_grid'))  
             else:
                 print('pick the customer first')

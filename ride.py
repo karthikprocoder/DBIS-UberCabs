@@ -6,6 +6,7 @@ import utils
 import time
 from math import ceil
 import datetime
+from tabulate import tabulate
 
 
 ###################### Connection to UberCabs database  ##########################
@@ -208,8 +209,10 @@ except psycopg2.Error as e:
 try:
     print("Ongoing ride.........")
     for i in range(n):
-        while utils.pick_option(["Reached Destination", "Ongoing"], "Ride status: ", "action") == "Ongoing":
-            pass
+        while utils.pick_option(["Reached Destination", "Tracking"], "Ride status: ", "action") != "Reached Destination":
+            sql = f"Select time ,latitude, longitude, name, city, street, country, landmark, state from tracking natural join location where ride_id = {r_id} order by time desc"
+            cur.execute(sql)
+            print(tabulate(cur.fetchall(), headers=[desc[0] for desc in cur.description], tablefmt='rounded_grid'))  
         cur.execute(f"UPDATE ride SET drop_time = current_timestamp, status = 'reached destination' where ride_id = {r_id} and cust_id = {cust_ids[i]}")
         x = utils.pick_option(["Yes", "No"], "Give us some feedback: ", "action")
         if x == "Yes":
