@@ -6,7 +6,7 @@ import utils
 import datetime
 import os
 from tabulate import tabulate 
-
+import getpass
 # Connection to UberCabs database
 conn = 0
 cur = 0
@@ -25,7 +25,7 @@ def make_conn():
     return cur, conn
 
 def find_driver_details_with_email(email):
-    sql = "SELECT cust_id FROM customer WHERE email = (%s);"
+    sql = "SELECT cust_id, password_hash FROM customer WHERE email = (%s);"
     data = [email, ]
     cur.execute(sql, data)
     res = cur.fetchone()
@@ -34,10 +34,10 @@ def find_driver_details_with_email(email):
 def add_customer(cust_email):
     print("You need to register yourself first")
     try:    
-        fname, lname, phone, dob = utils.prompt_customer_details()
+        fname, lname, phone, dob, passwd_hash = utils.prompt_customer_details()
         dob = datetime.date(*list(map(int, dob.split('-')))) 
         id = utils.getId('customer', 'cust_id', cur)
-        cur.execute(f"INSERT INTO customer (cust_id, cust_fname, cust_lname, email, dob) VALUES ({id},'{fname}', '{lname}', '{cust_email}', '{dob}')")
+        cur.execute(f"INSERT INTO customer (cust_id, cust_fname, cust_lname, email, dob, password_hash) VALUES ({id},'{fname}', '{lname}', '{cust_email}', '{dob}', '{passwd_hash}')")
         cur.execute(f"INSERT INTO customer_phone VALUES ('{phone}', {id})")
         conn.commit()
         cust_details["id"] = id;
@@ -82,6 +82,11 @@ if __name__ == '__main__':
         add_customer(cust_details["email"])
     else:
         cust_details["id"] = int(reg[0])
+        while True:
+            password = getpass.getpass("Enter your password to Log In: ")
+            if utils.verify_password(password, str(reg[-1])):
+                break
+            print("Invalid Password, please try again.")
         print("Logged in successfully !!")
     
     while True:
