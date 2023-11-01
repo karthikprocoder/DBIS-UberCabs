@@ -8,7 +8,7 @@ In this project we have made a database schema for Uber Cabs and implemented som
 pip install psycopg2 tabulate inquirer numpy bcrypt
 ```
 2) Create a database with name **ubercabs** and fill in your credentials in credentials.py
-3) Use the create_tables.sql file in the schema folder to create tables and populate it using populate.sql
+3) Use the create_tables.sql file in the schema folder to create tables and populate it using populate_tables.sql
 
 ## Files
 1) ride.py: Simulates the ride for a customer, right from booking the cab to reaching the destination
