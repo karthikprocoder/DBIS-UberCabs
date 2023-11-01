@@ -15,7 +15,7 @@ pip install psycopg2 tabulate inquirer numpy bcrypt
 2) customer.py: A dashboard interface for customer
 3) driver.py: A dashboard for the driver.
 4) admin.py: Will be used by the UberCab admin to monitor and fetch statistics
-5) loan and loan_payment.py: Driver-loan queries
+5) loan.py and loan_payment.py: Driver-loan queries
   
 ## Team Members
 - Aditya Zanjurne (210010001)
