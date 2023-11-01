@@ -1,13 +1,14 @@
 import psycopg2
-import pandas as pd
 from tabulate import tabulate
 import inquirer
-import credentials as creds
-
 
 # Connection to UberCabs database
 try:
-    conn = psycopg2.connect(**creds.db_params)
+    conn = psycopg2.connect(database='uberCabs',
+                            host="localhost",
+                            user="postgres",
+                            password="adipgadmin@1101",
+                            port=5432)
     cur = conn.cursor()
     print("Welcome")
 except psycopg2.Error as e:
