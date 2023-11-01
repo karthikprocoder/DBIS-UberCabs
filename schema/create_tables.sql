@@ -214,8 +214,6 @@ CREATE TABLE Charges
 (
   amount NUMERIC(5, 2) NOT NULL CHECK(amount > 0),
   timestamp TIMESTAMP DEFAULT current_timestamp,
-  -- late_fees NUMERIC(5, 2) NOT NULL CHECK(late_fees >= 0),
-  -- purpose_of_pay VARCHAR(50) NOT NULL,
   status VARCHAR(20) DEFAULT 'Pending' CHECK (status IN ('Pending', 'Completed')),
   mode_of_payment VARCHAR(20) NOT NULL CHECK(mode_of_payment IN ('Online', 'Cash')),
   ride_id INT NOT NULL,
@@ -226,10 +224,7 @@ CREATE TABLE Charges
 
 CREATE TABLE Commission
 (
-  -- purpose_of_pay VARCHAR(50) NOT NULL,
   timestamp TIMESTAMP NOT NULL,
-  -- bonus NUMERIC(5, 2) NOT NULL CHECK(bonus >= 0),
-  -- tax NUMERIC(5, 2) NOT NULL CHECK(tax > 0),
   earning NUMERIC(4, 2),
   driv_id INT,
   ride_id INT NOT NULL,
@@ -239,14 +234,7 @@ CREATE TABLE Commission
   FOREIGN KEY (ride_id, cust_id) REFERENCES Ride(ride_id, cust_id)
 );
 
--- CREATE TABLE Stops
--- (
---   loc_id INT NOT NULL,
---   ride_id INT NOT NULL,
---   cust_id INT NOT NULL,
---   FOREIGN KEY (loc_id) REFERENCES Location(loc_id),
---   FOREIGN KEY (ride_id, cust_id) REFERENCES Ride(ride_id, cust_id)
--- );
+
 
 CREATE TABLE Customer_phone
 (
