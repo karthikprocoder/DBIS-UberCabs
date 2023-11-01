@@ -187,7 +187,7 @@ def get_earning(driv_id, num = -1):
             ELSE 'Completed'
             END AS status
             FROM ride NATURAL LEFT OUTER JOIN commission WHERE ride.driv_id = {driv_id}
-            ORDER BY reserv_time
+            ORDER BY reserv_time DESC
     """
     if (num!=-1):
         sql += f" LIMIT {num}"

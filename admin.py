@@ -38,9 +38,6 @@ def get_avg_driv_rating():
                 ORDER BY Driver_Average_Rating DESC""")
     columns=['Driver ID', 'Driver name', 'Average Rating']
     print(tabulate(cur.fetchall(), headers = columns, tablefmt = 'rounded_grid'), '\n')
-    # r = cur.fetchall()
-    # df = pd.DataFrame(r, columns=['Driver ID', 'Average Rating'])
-    # print(df, '\n')
 
 def get_avg_wait_time():
     print("Average Waiting Time for a driver:")
@@ -51,18 +48,12 @@ def get_avg_wait_time():
                 ORDER BY Booking_Pickup_delay DESC""")
     columns=['Driver ID', 'Driver Name', 'Average Waiting Time(in mins)']
     print(tabulate(cur.fetchall(), headers = columns, tablefmt = 'rounded_grid'), '\n')
-    # r = cur.fetchall()
-    # df = pd.DataFrame(r, columns=['Driver ID', 'Driver Name', 'Average Waiting Time(in mins)'])
-    # print(df, '\n')
 
 def get_cust_pay_status():
     print("Payment status of customer:")
     cur.execute("""SELECT * FROM Cust_payment_status""")
     columns=['Customer ID', 'Customer Name', 'Ride ID', 'Amount(in Rs)', 'Booking Time', 'Pickup Location', 'Drop Location', 'Payment Status']
     print(tabulate(cur.fetchall(), headers = columns, tablefmt = 'rounded_grid'), '\n')
-    # r = cur.fetchall()
-    # df = pd.DataFrame(r, columns=['Customer ID', 'Customer Name', 'Ride ID', 'Amount(in Rs)', 'Booking Time', 'Pickup Location', 'Drop Location', 'Payment Status'])
-    # print(df.to_string(), '\n')
 
 def get_pending_payments():
     print("Number of pending payments for customers:")
@@ -72,9 +63,6 @@ def get_pending_payments():
                 GROUP BY cust_id, Customer_name""")
     columns=['Customer ID', 'Customer name', 'Number of pending payments']
     print(tabulate(cur.fetchall(), headers = columns, tablefmt = 'rounded_grid'), '\n')
-    # r = cur.fetchall()
-    # df = pd.DataFrame(r, columns=['Customer ID', 'Number of pending payments'])
-    # print(df, '\n')
 
 def get_driv_comm_rate():
     print("Commission rates of drivers:")
@@ -84,9 +72,6 @@ def get_driv_comm_rate():
                 ORDER BY commission_rate DESC""")
     columns=['Driver ID', 'Driver Name', 'Commission Rate(factor)']
     print(tabulate(cur.fetchall(), headers = columns, tablefmt = 'rounded_grid'), '\n')
-    # r = cur.fetchall()
-    # df = pd.DataFrame(r, columns=['Driver ID', 'Driver Name', 'Commission Rate(factor)'])
-    # print(df, '\n')
 
 def get_popular_rides():
     print("Popular Rides:")
@@ -96,18 +81,12 @@ def get_popular_rides():
                 ORDER BY COUNT(*) DESC""")
     columns=['Vehicle Type', 'Number of Rides']
     print(tabulate(cur.fetchall(), headers = columns, tablefmt = 'rounded_grid'), '\n')
-    # r = cur.fetchall()
-    # df = pd.DataFrame(r, columns=['Vehicle Type', 'Number of Rides'])
-    # print(df, '\n')
 
 def get_rides_per_day():
     print("Total Rides per Day:")
     cur.execute("""SELECT * FROM Total_rides_per_day""")
     columns=['Date', 'Number of Rides']
     print(tabulate(cur.fetchall(), headers = columns, tablefmt = 'rounded_grid'), '\n')
-    # r = cur.fetchall()
-    # df = pd.DataFrame(r, columns=['Date', 'Number of Rides'])
-    # print(df, '\n')
 
 def get_pop_pickup_loc():
     print("Popular Pickup Locations:")
@@ -118,9 +97,6 @@ def get_pop_pickup_loc():
                 ORDER BY pickup_count DESC""")
     columns=['Pickup Location ID', 'Pickup Location', 'Number of Rides from this location']
     print(tabulate(cur.fetchall(), headers = columns, tablefmt = 'rounded_grid'), '\n')
-    # r = cur.fetchall()
-    # df = pd.DataFrame(r, columns=['Pickup Location', 'Number of Rides from this location'])
-    # print(df, '\n')
 
 def get_pop_drop_loc():
     print("Popular Drop Locations:")
@@ -131,30 +107,21 @@ def get_pop_drop_loc():
                 ORDER BY drop_count DESC""")
     columns=['Drop Location ID', 'Drop Location', 'Number of Rides ending at this location']
     print(tabulate(cur.fetchall(), headers = columns, tablefmt = 'rounded_grid'), '\n')
-    # r = cur.fetchall()
-    # df = pd.DataFrame(r, columns=['Drop Location', 'Number of Rides ending at this location'])
-    # print(df, '\n')
 
 def get_driv_earn():
     print("Driver Earnings:")
-    cur.execute("""SELECT driv_id, SUM(commission_rate * amount) AS Earnings
-                FROM (Driver NATURAL JOIN Ride) JOIN Charges USING (ride_id, cust_id)
+    cur.execute("""SELECT driv_id, SUM(earning) AS Earnings
+                FROM Commission
                 GROUP BY driv_id
                 ORDER BY Earnings DESC""")
     columns=['Driver ID', 'Earnings(in Rs)']
     print(tabulate(cur.fetchall(), headers = columns, tablefmt = 'rounded_grid'), '\n')
-    # r = cur.fetchall()
-    # df = pd.DataFrame(r, columns=['Driver ID', 'Earnings(in Rs)'])
-    # print(df, '\n')
 
 def get_rev_by_loc():
     print("Revenue by City / Pickup Location:")
     cur.execute("""SELECT * FROM Revenue_by_location""")
     columns=['Pickup Location', 'Revenue from this location(in Rs)']
     print(tabulate(cur.fetchall(), headers = columns, tablefmt = 'rounded_grid'), '\n')
-    # r = cur.fetchall()
-    # df = pd.DataFrame(r, columns=['Pickup Location', 'Revenue from this location(in Rs)'])
-    # print(df, '\n')
 
 def get_payment_method():
     print("Payment Method Distribution:")
@@ -166,29 +133,18 @@ def get_payment_method():
                 ORDER BY Num_Rides DESC""")
     columns=['Mode of payment', 'Number of Rides']
     print(tabulate(cur.fetchall(), headers = columns, tablefmt = 'rounded_grid'), '\n')
-    # r = cur.fetchall()
-    # df = pd.DataFrame(r, columns=['Mode of payment', 'Number of Rides'])
-    # print(df, '\n')
 
 def get_driv_loan_details():
     print("Loan details of Drivers:")
-    cur.execute("""SELECT lp.driv_id, lp.loan_id, chassis_num, lp.amount, balance_amt, emi_amount, lp.status
+    cur.execute("""SELECT lp.driv_id, lp.loan_id, chassis_num, lp.amount, unpaid_amount, emi_amount, cl.status
                 FROM Car_loan AS cl, Loan_payment AS lp
                 WHERE cl.amount = lp.amount AND
                 cl.loan_id = lp.loan_id AND
                 cl.driv_id = lp.driv_id
-                ORDER BY balance_amt DESC""")
+                ORDER BY unpaid_amount DESC""")
     columns=['Driver ID', 'Loan ID', 'Vehicle Chassis Number', 'Loan Amount(in Rs)', 'Balance Amount(in Rs)', 'EMI Amount(in Rs)', 'Loan Payment Status']
     print(tabulate(cur.fetchall(), headers = columns, tablefmt = 'rounded_grid'), '\n')
-    # r = cur.fetchall()
-    # df = pd.DataFrame(r, columns=['Driver ID', 'Loan ID', 'Vehicle Chassis Number', 'Loan Amount(in Rs)', 'Balance Amount(in Rs)', 'EMI Amount(in Rs)',
-    #                               'Loan Payment Status'])
-    # print(df.to_string(), '\n')
 
-# def get_result(option, query, columns):
-#     print(option + ':')
-#     cur.execute(query)
-#     print(tabulate(cur.fetchall(), headers = columns, tablefmt = 'rounded_grid'), '\n')
 
 def stats():
     while(1):
@@ -233,24 +189,28 @@ def stats():
 
 if __name__ == '__main__': 
 
-    print('\nAdding commission to drivers\n')
-    try:
-        cur.execute("""WITH no_car_pool(ride_id, cust_id, driv_id, amount) AS
-                    (SELECT Ride.ride_id, Ride.cust_id, Ride.driv_id, Charges.amount
-                    FROM Ride, Charges
-                    WHERE Ride.ride_id = Charges.ride_id AND
-                    Ride.cust_id = Charges.cust_id AND
-                    car_pool = 'No' AND Charges.status = 'Completed')
-                    INSERT INTO Commission
-                    (SELECT DATE_TRUNC('seconds', CURRENT_TIMESTAMP), amount * commission_rate, driv_id, ride_id, cust_id
-                    FROM no_car_pool NATURAL JOIN Driver
-                    WHERE ride_id NOT IN (SELECT ride_id FROM Commission))""")
-        conn.commit()
-        print("\nSuccessfully transferred commission to drivers!\n")
-    except psycopg2.Error as e:
-        print(f'Database error: {e}')
-        conn.rollback()
-        print("ROLLBACK")
+    msg = "Add commission to drivers?"
+    options = ["Yes", "No"]
+    data = pick_option(options, msg, "action")
+    if(data == options[0]):
+        print('Adding commission to drivers\n')
+        try:
+            cur.execute("""WITH no_car_pool(ride_id, cust_id, driv_id, amount) AS
+                        (SELECT Ride.ride_id, Ride.cust_id, Ride.driv_id, Charges.amount
+                        FROM Ride, Charges
+                        WHERE Ride.ride_id = Charges.ride_id AND
+                        Ride.cust_id = Charges.cust_id AND
+                        car_pool = 'No' AND Charges.status = 'Completed')
+                        INSERT INTO Commission
+                        (SELECT DATE_TRUNC('seconds', CURRENT_TIMESTAMP), amount * commission_rate, driv_id, ride_id, cust_id
+                        FROM no_car_pool NATURAL JOIN Driver
+                        WHERE ride_id NOT IN (SELECT ride_id FROM Commission))""")
+            conn.commit()
+            print("Successfully transferred commission to drivers!\n")
+        except psycopg2.Error as e:
+            print(f'Database error: {e}')
+            conn.rollback()
+            print("ROLLBACK")
     
     msg = "Wish to see stats?"
     options = ['Yes', 'No']
