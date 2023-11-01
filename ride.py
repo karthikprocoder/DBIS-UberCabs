@@ -218,12 +218,13 @@ try:
             print(tabulate(cur.fetchall(), headers=[desc[0] for desc in cur.description], tablefmt='rounded_grid'))  
         cur.execute(f"UPDATE ride SET drop_time = current_timestamp, status = 'reached destination' where ride_id = {r_id} and cust_id = {cust_ids[i]}")
         x = utils.pick_option(["Yes", "No"], "Give us some feedback: ", "action")
+        conn.commit()
         if x == "Yes":
             rev_msg = input("feedback message: ").strip()
             print()
             driv_rating = utils.pick_option([5, 4, 3, 2, 1], "Rate the driver: ", "action")
             cur.execute(f"UPDATE ride SET review = '{rev_msg}', driv_rating = {driv_rating} where ride_id = {r_id} and cust_id = {cust_ids[i]} ")
-    conn.commit()
+        conn.commit()
 except psycopg2.Error as e:
     print(e)
     conn.rollback()
