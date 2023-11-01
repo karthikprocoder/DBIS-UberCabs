@@ -1,7 +1,10 @@
+#!/usr/bin/python   
+
 import psycopg2
 import inquirer
 import random
 import datetime;
+import credentials as creds
 
 # Why loan_payment has field Paypal as only option?
 # DETAIL:  Key (driv_id, rev_id)=(5, 5) already exists.
@@ -19,11 +22,7 @@ def pick_option(options, msg, attr="action"):
     return answers[attr]
 
 try:
-    conn = psycopg2.connect(database='ubercabs',
-        host="localhost",
-        user="newuser",
-        password="123456",
-        port=5432)
+    conn = psycopg2.connect(**creds.db_params)
 except psycopg2.Error as e:
     print(f"Database connection error: {e}")
     exit(-1)

@@ -1,6 +1,9 @@
+#!/usr/bin/python
+
 import psycopg2
 import inquirer
 import datetime
+import credentials as creds
 
 # removed tax rate, removed status from loan_payment, removed balance amount
 # corrected primary key
@@ -17,11 +20,7 @@ def pick_option(options, msg, attr="action"):
 
 
 try:
-    conn = psycopg2.connect(database='ubercabs',
-        host="localhost",
-        user="newuser",
-        password="123456",
-        port=5432)
+    conn = psycopg2.connect(**creds.db_params)
 except psycopg2.Error as e:
     print(f"Database connection error: {e}")
     exit(-1)
