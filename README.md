@@ -18,7 +18,7 @@ pip install psycopg2 tabulate inquirer numpy bcrypt
 5) loan.py and loan_payment.py: Driver-loan queries
   
 ## Team Members
+- Cebajel Tanan (210010055)
 - Aditya Zanjurne (210010001)
 - Divy Jain (210010015)
 - Karthik Hegde (210010022)
-- Cebajel Tanan (210010055)
